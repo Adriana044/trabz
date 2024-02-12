@@ -1,0 +1,29 @@
+const Web3 = require('web3');
+const web3 = new Web3('https://mainnet.infura.io/v3/YOUR_INFURA_PROJECT_ID');
+
+const account1 = '0xYourAccount1Address'; // Ваш адрес аккаунта
+const account2 = '0xYourAccount2Address'; // Адрес аккаунта получателя
+
+const privateKey1 = Buffer.from('YOUR_PRIVATE_KEY', 'hex'); // Ваш приватный ключ
+
+const sendTransaction = async () => {
+    const txCount = await web3.eth.getTransactionCount(account1);
+    const txObject = {
+        nonce:    web3.utils.toHex(txCount),
+        to:       account2,
+        value:    web3.utils.toHex(web3.utils.toWei('0.1', 'ether')),
+        gasLimit: web3.utils.toHex(21000),
+        gasPrice: web3.utils.toHex(web3.utils.toWei('10', 'gwei'))
+    };
+
+    const tx = new Tx(txObject, { chain: 'mainnet' });
+    tx.sign(privateKey1);
+
+    const serializedTx = tx.serialize();
+    const raw = '0x' + serializedTx.toString('hex');
+
+    const receipt = await web3.eth.sendSignedTransaction(raw);
+    console.log(`Transaction hash: ${receipt.transactionHash}`);
+};
+
+sendTransaction();
